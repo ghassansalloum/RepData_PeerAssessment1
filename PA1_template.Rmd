@@ -109,3 +109,4 @@ backfilledaggregates <- summarise(group_by(backfilledtotals, interval, weekdayfl
 
 qplot(interval, average, data=backfilledaggregates, facets=weekdayflag~., geom="line", ylab="average steps")
 ```
+Notice the difference in the patterns between weekends and weekdays: weekdays have a sharper incline around the morning rush hour, and relatively lower activity during the afternoons, when compared to weekdays.
