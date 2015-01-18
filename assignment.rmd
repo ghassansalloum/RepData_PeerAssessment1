@@ -1,0 +1,78 @@
+
+#Peer assignment 1
+
+## Loading and pre-processing the data
+```{r results="hide"}
+library(dplyr) # install.packages("dplyr") if you don't have this library on your system
+```
+
+```{r}
+# Replace the following with the correct folder on your machine
+setwd("C:\\Users\\G\\SkyDrive\\Documents\\Coursera\\Reproducible research")
+
+url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+urlfile = "activity.zip"
+file="activity.csv"
+
+# download the file if you don't already have it in your working directory
+if (!file.exists(urlfile))
+  download.file(url, destfile=urlfile)
+
+# unzip the file if you haven't already done so in your working directory
+if (!file.exists(file)) {
+  unzip(urlfile)
+}
+
+mydata <- read.csv(file)
+
+```
+
+## What is the mean total number of steps taken per day?
+```{r}
+dailytotals<- summarise(group_by(mydata, date), total=sum(steps, na.rm=T))
+barplot(dailytotals$total, main="Daily activity", xlab="Days", ylab="Steps")
+```
+
+Computing the daily mean and median values is straightforward:
+```{r}
+dailymean<-mean(dailytotals$total)
+dailymedian<-median(dailytotals$total)
+```
+The mean value for the daily steps **dailymean** is **`r dailymean`**.
+
+The median value **dialymedian** is **`r dailymedian`**.
+
+##  What is the average daily activity pattern?
+Here is how to generate the plot for the average number of steps for each time interval of a day:
+```{r}
+interval.average<- summarise(group_by(mydata, interval), mean=mean(steps, na.rm=T))
+plot(y=interval.average$mean, x=interval.average$interval, type="l", main="Daily activity patterns", xlab="Time interval (minutes)", ylab="Average steps")
+```
+
+The time interval with the most steps, on average:
+```{r}
+mydata[which(interval.average$mean==max(interval.average$mean)), "interval"]
+
+```
+
+## Inputing missing values
+The number of missing values in the dataset:
+```{r}
+sum(is.na(mydata$steps))
+```
+
+We're going to fill these missing values with the mean for that interval, calculated across the days in the dataset. The mean for the interval is already stored in the data frame **interval.average**
+```{r}
+backfilleddata<- inner_join(mydata, interval.average, by=c("interval")) # add a column showing the mean for that time interval
+backfilleddata$steps<- ifelse(is.na(backfilleddata$steps), backfilleddata$mean, backfilleddata$steps) # replace the "steps" value with the mean for all NAs.
+
+backfilledtotals<- summarise(group_by(backfilleddata, date), total=sum(steps, na.rm=T))
+barplot(backfilledtotals$total,main="Daily activity (backfilled NAs)", xlab="Days", ylab="Steps")
+newdailymean <- mean(backfilledtotals$total)
+newdailymedian <- median(backfilledtotals$total)
+
+```
+ 
+The new mean for total steps per day **newdailymean** is **`r format(newdailymean, digits=2, nsmall=2)`** (before filling the imputed NAs it was `r format(dailymean, digits=2, nsmall=2)`).
+
+The new median for total steps per day **newdailymedian** is **`r format(newdailymedian, digits=2, nsmall=2)`** (before filling the imputed NAs is was `r dailymedian`).
