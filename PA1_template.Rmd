@@ -78,9 +78,15 @@ newdailymedian <- median(backfilledtotals$total)
 
 ```
  
-The new mean for total steps per day **newdailymean** is **`r format(newdailymean, digits=2, nsmall=2)`** (before filling the imputed NAs it was `r format(dailymean, digits=2, nsmall=2)`).
+The new mean for total steps per day **newdailymean** is:
+```{r}
+format(newdailymean, digits=2, nsmall=2)
+```
 
-The new median for total steps per day **newdailymedian** is **`r format(newdailymedian, digits=2, nsmall=2)`** (before filling the imputed NAs is was `r dailymedian`).
+The new median for total steps per day **newdailymedian** is:
+```{r}
+newdailymedian
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
