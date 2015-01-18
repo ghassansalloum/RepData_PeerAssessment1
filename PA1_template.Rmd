@@ -95,6 +95,7 @@ The new median for total steps per day **newdailymedian** is:
 ```{r}
 newdailymedian
 ```
+The mean and median are greater than the ones calculated before filling the imputed NAs.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
